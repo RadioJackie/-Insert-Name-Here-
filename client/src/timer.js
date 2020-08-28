@@ -1,45 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react'
 
-const Timer = () => {
-  const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-
-  function toggle() {
-    setIsActive(!isActive);
-  }
-
-  function reset() {
-    setSeconds(0);
-    setIsActive(false);
-  }
-
-  useEffect(() => {
-    let interval = null;
-    if (isActive) {
-      interval = setInterval(() => {
-        setSeconds(seconds => seconds + 1);
-      }, 1000);
-    } else if (!isActive && seconds !== 0) {
-      clearInterval(interval);
+export default class Timer extends Component {
+    state = {
+        minutes: 25,
+        seconds: 0,
     }
-    return () => clearInterval(interval);
-  }, [isActive, seconds]);
 
-  return (
-    <div className="app">
-      <div className="time">
-        {seconds}s
-      </div>
-      <div className="row">
-        <button className={`button button-primary button-primary-${isActive ? 'active' : 'inactive'}`} onClick={toggle}>
-          {isActive ? 'Pause' : 'Start'}
-        </button>
-        <button className="button" onClick={reset}>
-          Reset
-        </button>
-      </div>
-    </div>
-  );
-};
+    componentDidMount() {
+        this.myInterval = setInterval(() => {
+            const { seconds, minutes } = this.state
 
-export default Timer;
+            if (seconds > 0) {
+                this.setState(({ seconds }) => ({
+                    seconds: seconds - 1
+                }))
+            }
+            if (seconds === 0) {
+                if (minutes === 0) {
+                    clearInterval(this.myInterval)
+                } else {
+                    this.setState(({ minutes }) => ({
+                        minutes: minutes - 1,
+                        seconds: 59
+                    }))
+                }
+            } 
+        }, 1000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.myInterval)
+    }
+
+    render() {
+        const { minutes, seconds } = this.state
+        return (
+            <div>
+                { minutes === 0 && seconds === 0
+                    ? <h1>Busted!</h1>
+                    : <h1>The Final Countdown: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
+                }
+            </div>
+        )
+    }
+}
