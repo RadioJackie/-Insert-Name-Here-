@@ -11,4 +11,4 @@ Tooling:
 Must use React and Node
 Must be backed by MongoDB or MySQL with sequelize or Mongoose rom
 Ideally have full CRUD routes- but at least Get and Post
-MUST BE DEPLOYED!
+
