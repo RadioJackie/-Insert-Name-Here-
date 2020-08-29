@@ -1,24 +1,29 @@
-// const express = require("express");
-// const path = require("path");
-// const PORT = process.env.PORT || 3001;
-// const app = express();
+import config from './../config/config'
+import app from './express'
+import mongoose from 'mongoose'
+import nodemon from "nodemon"
+import express from "express"
+import mongoose from "mongoose"
+import react from "react"
+// Connection URL
+mongoose.Promise = global.Promise
+mongoose.connect(config.mongoUri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true })
+mongoose.connection.on('error', () => {
+    throw new Error(`unable to connect to database: ${config.mongoUri}`)
+})
 
-// // Define middleware here
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json());
-// // Serve up static assets (usually on heroku)
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static("client/build"));
-// }
+const express = require("express");
+const app = express();
+const port = 3000;
+app.get("/", (req, res) => res.send("hey bub!"));
 
-// // Define API routes here
+app.listen(port, () => console.log(
+    `listening on port ${port}!`
+));
 
-// // Send every other request to the React app
-// // Define any API routes before this runs
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "./client/build/index.html"));
-// });
-
-// app.listen(PORT, () => {
-//   console.log(`🌎 ==> API server now on port ${PORT}!`);
-// });
+app.listen(config.port, (err) => {
+    if (err) {
+        console.log(err)
+    }
+    console.info('Server started on port %s.', config.port)
+})
